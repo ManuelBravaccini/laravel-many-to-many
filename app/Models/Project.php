@@ -22,4 +22,9 @@ class Project extends Model
     {
         return filter_var($this->image, FILTER_VALIDATE_URL);
     }
+
+    public function technologies()
+    {
+        return $this->belongsToMany(Technology::class);
+    }
 }
