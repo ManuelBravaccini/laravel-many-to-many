@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Type;
 use App\Models\Project;
+use App\Models\Technology;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -19,7 +20,8 @@ class ProjectController extends Controller
         'project_date' => 'required',
         'content' => 'required',
         'image' => 'required|image|max:1024', // Max file size 1 MB
-        'type_id' => 'required|exists:types,id'
+        'type_id' => 'required|exists:types,id',
+        'technologies' => 'array|exists:technologies,id'
     ];
     /**
      * Display a listing of the resource.
@@ -39,7 +41,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('admin.projects.create', ['project' => new Project(), 'types' => Type::all()]);
+        return view('admin.projects.create', ['project' => new Project(), 'types' => Type::all(), 'technologies' => Technology::all()]);
     }
 
     /**
@@ -57,6 +59,7 @@ class ProjectController extends Controller
         $newProject = new Project();
         $newProject->fill($data);
         $newProject->save();
+        $newProject->technologies()->sync($data['technologies']);
 
         return redirect()->route('admin.projects.index');
     }
@@ -80,7 +83,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', ['project' => $project, 'types' => Type::all()]);
+        return view('admin.projects.edit', ['project' => $project, 'types' => Type::all(), 'technologies' => Technology::all()]);
     }
 
     /**
@@ -97,7 +100,8 @@ class ProjectController extends Controller
             'project_date' => 'required',
             'content' => 'required',
             'image' => 'required|image|max:1024', // Max file size 1 MB
-            'type_id' => 'required|exists:types,id'
+            'type_id' => 'required|exists:types,id',
+            'technologies' => 'array|exists:technologies,id'
         ]);
 
 
@@ -111,6 +115,7 @@ class ProjectController extends Controller
         }
 
         $project->update($data);
+        $project->technologies()->sync($data['technologies']);
 
         return redirect()->route('admin.projects.show', compact('project'));
     }
@@ -128,6 +133,7 @@ class ProjectController extends Controller
             Storage::delete($project->image);
         }
 
+        $project->technologies()->sync([]);
         $project->delete();
 
         return redirect()->route('admin.projects.index');

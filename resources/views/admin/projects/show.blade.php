@@ -10,6 +10,14 @@
             <h2 class="card-title fw-bold p-3">
                 {{ $project->title }}
             </h2>
+            
+            <div class="tags mb-5">
+                @foreach ($project->technologies as $technology)
+                   <span class="p-2 badge rounded-pill"
+                   style="background-color: {{ $technology->color }}; color: {{ $technology->color }}"> #{{ $technology->name }}</span>
+                @endforeach
+            </div>
+
             <p class="card-text mb-4">
                 {{ $project->content }}
             </p>

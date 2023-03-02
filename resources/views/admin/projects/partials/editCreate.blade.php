@@ -34,6 +34,22 @@
             </option>
         @endforeach
     </select>
+    <div class="d-flex align-items-center mb-3">
+        @foreach ($technologies as $technology)
+            <div class="single-technology d-flex align-items-center">
+                <input type="checkbox" class="form-check-input p-2 ms-2" name="technologies[]" value="{{ $technology->id }}"
+
+                @if ($errors->any())
+                    @checked(in_array($technology->id, old('technologies',[])))
+                @else
+                    @checked($project->technologies->contains($technology->id))
+                @endif
+                >
+
+                <label class="form-check-label ms-2">{{ $technology->name }}</label>
+            </div>
+        @endforeach
+    </div>
 
     <div class="mb-3">
         <label for="project_date" class="form-label">Project date</label>
